@@ -8,9 +8,9 @@ const lorem = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do e
 const Cards = ref([]) 
 const currentCards = ref([]) 
 
-function getCards() {
+async function getCards() {
     
-    useNuxtApp().$api.get(`https://mdl.belosnezhka-pg.ru/bot/`)
+    await useNuxtApp().$api.get(`https://mdl.belosnezhka-pg.ru/bot/`)
     .then((response) => {
         currentCards.value = response.data;
         const numCards = currentCards.value.length;
@@ -26,8 +26,9 @@ function getCards() {
                 name: currentCards.value[i]["name"],
                 opening_hours: currentCards.value[i]["opening_hours"],
                 type: currentCards.value[i]["type"],
+                expanded:false,
                 onClick: () => {
-                    navigateTo(currentCards.value[i]["map_links"])
+                    navigateTo(currentCards.value[i]["map_links"], { external: true })
                 }
             })
             }
@@ -38,23 +39,22 @@ getCards()
 </script>
 <template>
     <div class="q-pa-xl row items-start flex flex-center items-center text-black q-gutter-md">
-      <q-card  v-for="item in items" :key="item" class="my-card col-3" flat bordered>
+      <q-card  v-for="card in Cards" :key="card" class="my-card col-3" flat bordered>
         <q-img
-          src="https://cdn.quasar.dev/img/parallax2.jpg"
+          src="~/assets/crypto.jpg"
         />
   
         <q-card-section>
-          <div class="text-overline text-orange-9">Overline</div>
-          <div class="text-h5 q-mt-sm q-mb-xs">Title</div>
+          
+          <div class="text-h5 q-mt-sm q-mb-xs">{{card.name}}</div>
+          <div class="text-overline text-gray-9">{{ card.address }}</div>
+          <div class="text-overline text-gray-9">Comission: {{ card.commission }}</div>
           <div class="text-caption text-grey">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Type: {{ card.type }}
           </div>
         </q-card-section>
   
         <q-card-actions>
-          <q-btn flat color="primary" label="Share" />
-          <q-btn flat color="secondary" label="Book" />
-  
           <q-space />
   
           <q-btn
@@ -62,16 +62,21 @@ getCards()
             round
             flat
             dense
-            :icon="expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
-            @click="expanded = !expanded"
+            :icon="card.expanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down'"
+            @click="card.expanded = !card.expanded"
           />
         </q-card-actions>
   
         <q-slide-transition>
-          <div v-show="expanded">
+          <div v-show="card.expanded">
             <q-separator />
             <q-card-section class="text-subtitle2">
-              {{ item }}
+                <div class="text-overline text-gray-9">{{ card.currencies }}</div>
+                <div class="text-overline text-gray-9">{{ card.opening_hours }}</div>
+                <div class="text-overline text-gray-9">{{ card.contacts }}</div>
+            </q-card-section>
+            <q-card-section>
+                <q-btn @click="card.onClick()">Go</q-btn>
             </q-card-section>
           </div>
         </q-slide-transition>
