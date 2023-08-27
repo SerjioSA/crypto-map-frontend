@@ -3,7 +3,8 @@
 </script>
 <template>
     <div class="Main">
-        <IndexLogo/>
-        <IndexCards/>
+        <!-- <IndexLogo/> -->
+        <IndexNewCard/>
+        <!-- <IndexCards/> -->
     </div>
 </template>
